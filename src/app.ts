@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRoutes from './routes/auth.routes';
 import itemRoutes from './routes/item.routes';
+import minecraftRoutes from './routes/minecraft.routes';
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/items', itemRoutes);
+app.use('/api/minecraft', minecraftRoutes);
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date() });
