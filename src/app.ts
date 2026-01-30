@@ -7,7 +7,10 @@ import itemRoutes from './routes/item.routes';
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Frontend URL
+    credentials: true // Allow cookies to be sent
+}));
 app.use(cookieParser());
 app.use(express.json());
 
