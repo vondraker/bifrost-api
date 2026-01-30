@@ -1,64 +1,93 @@
 import { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import { OAuth2Client } from 'google-auth-library';
 import { User } from '../types/user.types';
 
-// Mock user for demonstration purposes
-// In a real application, you would fetch this from a database
-const MOCK_USER: User = {
-    id: '1',
-    email: 'test@example.com',
-    name: 'Test User',
-    // hash of 'password123'
-    password: '$2a$10$wT.fGv/Tq.j./.u.v.j.u.e.r.t.y.u.i.o.p.1.2.3' // This is just a placeholder, we will handle logic below
-};
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// We prefer to just mock the password check for simplicity in this initial setup if we don't have a DB yet.
-// Let's assume the mock user has password 'password123'
-// hash for 'password123' is usually something like: $2a$10$X7...
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 export const login = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email, password } = req.body;
+        const { credential } = req.body;
 
-        if (!email || !password) {
-            res.status(400).json({ message: 'Email and password are required' });
+        if (!credential) {
+            res.status(400).json({ message: 'Google credential is required' });
             return;
         }
 
-        // Check if user exists (Mock check)
-        if (email !== MOCK_USER.email) {
-            res.status(401).json({ message: 'Invalid credentials' });
+        // Verify Google Token
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+
+        const payload = ticket.getPayload();
+
+        if (!payload || !payload.email) {
+            res.status(401).json({ message: 'Invalid Google token' });
             return;
         }
 
-        // Validate password
-        // In a real app we would use bcrypt.compare(password, user.password)
-        // For this mock, let's just accept 'password123'
-        if (password !== 'password123') {
-            res.status(401).json({ message: 'Invalid credentials' });
-            return;
-        }
+        const { sub: googleId, email, name, picture } = payload;
 
-        // Generate JWT
+        // In a real app, verify if user exists in DB, if not create them.
+        const user: User = {
+            id: googleId,
+            email: email,
+            name: name || 'User',
+            picture: picture
+        };
+
+        // Generate Application JWT
         const token = jwt.sign(
-            { userId: MOCK_USER.id, email: MOCK_USER.email },
-            process.env.JWT_SECRET || 'your-secret-key', // Fallback for dev
+            { userId: user.id, email: user.email, name: user.name, picture: user.picture },
+            JWT_SECRET,
             { expiresIn: '1h' }
         );
 
+        // Set Cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', // false for localhost
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 3600000 // 1 hour
+        });
+
         res.json({
             message: 'Login successful',
-            token,
-            user: {
-                id: MOCK_USER.id,
-                email: MOCK_USER.email,
-                name: MOCK_USER.name
-            }
+            user
         });
 
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(401).json({ message: 'Invalid authentication' });
+    }
+};
+
+export const getMe = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const token = req.cookies.token;
+
+        if (!token) {
+            res.status(401).json({ message: 'Not authenticated' });
+            return;
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET) as any;
+
+        const user: User = {
+            id: decoded.userId,
+            email: decoded.email,
+            name: decoded.name,
+            picture: decoded.picture
+        }
+
+        res.json({
+            user
+        });
+
+    } catch (error) {
+        res.status(401).json({ message: 'Invalid or expired token' });
     }
 };
