@@ -1,10 +1,7 @@
 import Redis from 'ioredis';
 
-// Connect to Redis running on localhost (mapped from docker)
-const redis = new Redis({
-    host: 'localhost', // Since backend is running locally, we connect to localhost
-    port: 6379,
-});
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+const redis = new Redis(redisUrl);
 
 redis.on('connect', () => {
     console.log('Redis connected');
