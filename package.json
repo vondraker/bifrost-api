@@ -5,8 +5,11 @@
   "main": "dist/server.js",
   "scripts": {
     "start": "node dist/server.js",
+    "start:nest": "node dist/nest/main.js",
     "dev": "nodemon --exec ts-node --transpile-only src/server.ts",
-    "build": "prisma generate && tsc"
+    "dev:nest": "nodemon --exec ts-node --transpile-only src/nest/main.ts",
+    "build": "prisma generate && tsc",
+    "build:nest": "prisma generate && tsc"
   },
   "repository": {
     "type": "git",
@@ -21,8 +24,14 @@
   },
   "homepage": "https://github.com/vondraker/bifrost-api#readme",
   "dependencies": {
+    "@nestjs/common": "^11.1.18",
+    "@nestjs/config": "^4.0.4",
+    "@nestjs/core": "^11.1.18",
+    "@nestjs/platform-express": "^11.1.18",
     "@prisma/client": "^5.22.0",
     "bcryptjs": "^3.0.3",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.2.3",
@@ -30,7 +39,9 @@
     "google-auth-library": "^10.5.0",
     "ioredis": "^5.9.2",
     "jsonwebtoken": "^9.0.3",
-    "pg": "^8.17.2"
+    "pg": "^8.17.2",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
