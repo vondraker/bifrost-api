@@ -4,8 +4,10 @@ import {
     Delete,
     Get,
     HttpCode,
+    HttpException,
     HttpStatus,
     InternalServerErrorException,
+    NotFoundException,
     Param,
     ParseIntPipe,
     Post,
@@ -43,7 +45,7 @@ export class ItemsController {
         try {
             return await this.itemsService.getItem(id);
         } catch (error) {
-            if (error instanceof Error && error.name === 'NotFoundException') {
+            if (error instanceof HttpException) {
                 throw error;
             }
             throw new InternalServerErrorException({ error: 'Failed to fetch item' });
@@ -55,8 +57,11 @@ export class ItemsController {
         try {
             return await this.itemsService.updateItem(id, body);
         } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
             if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
-                throw new InternalServerErrorException({ error: 'Failed to update item' });
+                throw new NotFoundException({ error: 'Item not found' });
             }
             throw new InternalServerErrorException({ error: 'Failed to update item' });
         }

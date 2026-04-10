@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Controller,
     Get,
+    HttpException,
     InternalServerErrorException,
     Param,
 } from '@nestjs/common';
@@ -13,24 +14,20 @@ export class MinecraftController {
 
     @Get('profile/:username')
     async getMinecraftProfile(@Param('username') username: string) {
-        try {
-            if (!username) {
-                throw new BadRequestException({ message: 'Username is required' });
-            }
+        if (!username) {
+            throw new BadRequestException({ message: 'Username is required' });
+        }
 
+        try {
             return await this.minecraftService.getProfile(username);
         } catch (error) {
-            if (error instanceof Error && (error.name === 'BadRequestException' || error.name === 'NotFoundException')) {
+            if (error instanceof HttpException) {
                 throw error;
             }
 
-            if (error instanceof Error) {
-                throw new InternalServerErrorException({
-                    message: error.message || 'Failed to fetch Minecraft profile',
-                });
-            }
-
-            throw new InternalServerErrorException({ message: 'Failed to fetch Minecraft profile' });
+            throw new InternalServerErrorException({
+                message: error instanceof Error ? error.message : 'Failed to fetch Minecraft profile',
+            });
         }
     }
 }

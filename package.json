@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "��#\u0000 \u0000b\u0000i\u0000f\u0000r\u0000o\u0000s\u0000t\u0000-\u0000a\u0000p\u0000i\u0000\r\u0000 \u0000\r\u0000 \u0000h\u0000o\u0000l\u0000a\u0000 \u0000m\u0000u\u0000n\u0000d\u0000o\u0000\r\u0000 \u0000",
+  "description": "bifrost-api backend service",
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
@@ -16,7 +16,7 @@
     "test": "npm run build && npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/*.test.cjs",
     "test:e2e": "node --test tests/e2e/*.test.cjs",
-    "test:watch": "node --test --watch tests/*.test.cjs"
+    "test:watch": "npm run build && node --test --watch tests/*.test.cjs"
   },
   "repository": {
     "type": "git",
