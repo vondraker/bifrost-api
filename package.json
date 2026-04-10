@@ -15,7 +15,7 @@
     "build": "prisma generate && tsc",
     "test": "npm run build && npm run test:unit && npm run test:e2e",
     "test:unit": "node --test tests/*.test.cjs",
-    "test:e2e": "node --test tests/e2e/**/*.test.cjs",
+    "test:e2e": "node --test tests/e2e/*.test.cjs",
     "test:watch": "node --test --watch tests/*.test.cjs"
   },
   "repository": {
