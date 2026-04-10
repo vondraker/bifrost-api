@@ -6,10 +6,19 @@ on:
   pull_request:
     branches: [main, dev]
 
+env:
+  PORT: 3000
+  NODE_ENV: test
+  JWT_SECRET: ci-test-secret
+  GOOGLE_CLIENT_ID: ci-test-client-id
+  DATABASE_URL: postgresql://ci:ci@localhost:5432/bifrost
+  REDIS_URL: redis://localhost:6379
+
 jobs:
-  build-backend:
-    name: Backend build
+  build-unit:
+    name: Build + Unit
     runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - name: Checkout
@@ -25,8 +34,47 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Generate Prisma Client
-        run: npx prisma generate
+      - name: Build
+        run: npm run build
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Print npm logs on failure
+        if: failure()
+        run: |
+          echo "CI failed. Showing npm logs if present:"
+          ls -la ~/.npm/_logs || true
+          tail -n +1 ~/.npm/_logs/* || true
+
+  e2e:
+    name: E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
 
       - name: Build
         run: npm run build
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Print npm logs on failure
+        if: failure()
+        run: |
+          echo "CI failed. Showing npm logs if present:"
+          ls -la ~/.npm/_logs || true
+          tail -n +1 ~/.npm/_logs/* || true

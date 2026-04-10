@@ -147,6 +147,14 @@ Archivos de test:
 - `npm run smoke:items`
 - `npm run smoke:db`
 
+## CI
+- Workflow: `.github/workflows/ci.yml`
+- En cada push/PR a `main` y `dev` ejecuta:
+  - Job `build-unit`: `npm ci`, `npm run build`, `npm run test:unit`
+  - Job `e2e`: `npm ci`, `npm run build`, `npm run test:e2e`
+
+Para considerar una PR como lista, deben pasar build + unit + e2e.
+
 ## Troubleshooting
 - Si falta `.env`, ejecuta `npm run dev:bootstrap` para regenerarlo.
 - Si Docker no esta disponible, instala Docker Desktop/Engine y verifica `docker compose version`.
