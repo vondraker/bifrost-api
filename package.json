@@ -13,8 +13,10 @@
     "smoke:items": "node test-api.js",
     "smoke:db": "node test-db.js",
     "build": "prisma generate && tsc",
-    "test": "npm run build && node --test tests/**/*.test.cjs",
-    "test:watch": "node --test --watch tests/**/*.test.cjs"
+    "test": "npm run build && npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test tests/*.test.cjs",
+    "test:e2e": "node --test tests/e2e/**/*.test.cjs",
+    "test:watch": "node --test --watch tests/*.test.cjs"
   },
   "repository": {
     "type": "git",
@@ -48,6 +50,7 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@nestjs/testing": "^11.1.18",
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.1.0",

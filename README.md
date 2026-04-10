@@ -99,12 +99,26 @@ npm start
 - `GET /api/minecraft/profile/:username`
 
 ## Tests
-Se agregaron tests con `node:test` para servicios y validacion de entorno.
+Se usan tests con `node:test` en dos niveles:
+- Unitarios de servicios y validacion de entorno.
+- E2E HTTP sobre la app Nest (Fastify inject).
 
-Ejecutar tests:
+Ejecutar toda la suite (unit + e2e):
 
 ```bash
 npm test
+```
+
+Solo unitarios:
+
+```bash
+npm run test:unit
+```
+
+Solo E2E:
+
+```bash
+npm run test:e2e
 ```
 
 Modo watch:
@@ -117,6 +131,7 @@ Archivos de test:
 - `tests/env.validation.test.cjs`
 - `tests/auth.service.test.cjs`
 - `tests/minecraft.service.test.cjs`
+- `tests/e2e/api.e2e.test.cjs`
 
 ## Scripts utiles
 - `npm run dev`
@@ -127,6 +142,8 @@ Archivos de test:
 - `npm run build`
 - `npm start`
 - `npm test`
+- `npm run test:unit`
+- `npm run test:e2e`
 - `npm run smoke:items`
 - `npm run smoke:db`
 
