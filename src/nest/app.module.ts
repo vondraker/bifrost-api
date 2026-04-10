@@ -4,6 +4,8 @@ import { AuthModule } from './auth/auth.module';
 import { validateEnv } from './config/env.validation';
 import { PrismaModule } from './infrastructure/database/prisma.module';
 import { RedisModule } from './infrastructure/redis/redis.module';
+import { ItemsModule } from './items/items.module';
+import { MinecraftModule } from './minecraft/minecraft.module';
 
 @Module({
     imports: [
@@ -14,6 +16,8 @@ import { RedisModule } from './infrastructure/redis/redis.module';
         PrismaModule,
         RedisModule,
         AuthModule,
+        ItemsModule,
+        MinecraftModule,
     ],
 })
 export class AppModule {}
