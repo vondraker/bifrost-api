@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from './auth.service';
 
@@ -10,11 +10,11 @@ export class AuthController {
     @Post('login')
     async login(
         @Body() body: LoginDto,
-        @Res({ passthrough: true }) response: Response,
+        @Res({ passthrough: true }) response: FastifyReply,
     ): Promise<{ message: string; user: unknown }> {
         const { user, token } = await this.authService.loginWithGoogleCredential(body.credential);
 
-        response.cookie('token', token, {
+        response.setCookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
@@ -28,8 +28,9 @@ export class AuthController {
     }
 
     @Get('me')
-    async getMe(@Req() request: Request): Promise<{ user: unknown }> {
-        const user = this.authService.getCurrentUser(request.cookies?.token as string);
+    async getMe(@Req() request: FastifyRequest): Promise<{ user: unknown }> {
+        const cookies = (request as FastifyRequest & { cookies?: Record<string, string> }).cookies;
+        const user = this.authService.getCurrentUser(cookies?.token as string);
         return { user };
     }
 }

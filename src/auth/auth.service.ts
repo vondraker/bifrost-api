@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
 import jwt from 'jsonwebtoken';
-import { User } from '../../types/user.types';
+import { User } from '../types/user.types';
 import { JwtUserPayload } from './types/jwt-user-payload.type';
 
 @Injectable()

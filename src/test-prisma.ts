@@ -1,6 +1,6 @@
+import { PrismaClient } from '@prisma/client';
 
-// @ts-ignore
-import prisma from './src/config/database';
+const prisma = new PrismaClient();
 
 async function main() {
     console.log('Connecting to database...');
