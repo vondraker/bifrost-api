@@ -6,6 +6,10 @@
   "scripts": {
     "start": "node dist/main.js",
     "dev": "nodemon --exec ts-node --transpile-only src/main.ts",
+    "dev:bootstrap": "bash ./scripts/dev-bootstrap.sh && npm run dev",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "prisma:generate": "prisma generate",
     "smoke:items": "node test-api.js",
     "smoke:db": "node test-db.js",
     "build": "prisma generate && tsc",

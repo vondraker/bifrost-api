@@ -49,10 +49,24 @@ Instalar dependencias:
 npm install
 ```
 
-Levantar servicios de infraestructura (opcional):
+Bootstrap recomendado (un comando):
 
 ```bash
-docker compose up -d
+npm run dev:bootstrap
+```
+
+Este comando:
+- Crea `.env` desde `.env.example` si no existe.
+- Levanta PostgreSQL y Redis con Docker Compose.
+- Genera Prisma Client.
+- Inicia la API en modo desarrollo.
+
+Flujo manual (si prefieres pasos separados):
+
+```bash
+npm run infra:up
+npm run prisma:generate
+npm run dev
 ```
 
 Ejecutar en modo desarrollo:
@@ -106,8 +120,17 @@ Archivos de test:
 
 ## Scripts utiles
 - `npm run dev`
+- `npm run dev:bootstrap`
+- `npm run infra:up`
+- `npm run infra:down`
+- `npm run prisma:generate`
 - `npm run build`
 - `npm start`
 - `npm test`
 - `npm run smoke:items`
 - `npm run smoke:db`
+
+## Troubleshooting
+- Si falta `.env`, ejecuta `npm run dev:bootstrap` para regenerarlo.
+- Si Docker no esta disponible, instala Docker Desktop/Engine y verifica `docker compose version`.
+- Si hay conflicto de puertos (`5433`, `6379`), detiene el proceso que los usa o cambia los puertos en `docker-compose.yml`.
